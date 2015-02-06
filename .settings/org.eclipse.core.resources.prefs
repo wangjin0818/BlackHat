@@ -1,2 +1,5 @@
 eclipse.preferences.version=1
 encoding//chapter2/bhpnet.py=utf-8
+encoding//chapter2/tcpClient.py=utf-8
+encoding//chapter2/tcpServer.py=utf-8
+encoding//chapter2/udpClient.py=utf-8
