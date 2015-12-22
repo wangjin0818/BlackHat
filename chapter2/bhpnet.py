@@ -20,13 +20,13 @@ def usage():
     print
     print "Usage: bhpnet.py -t target_host -p port"
     print "-l --listen                - listen on [host]:[port] for \
-                                        incoming connections"
+                                                    incoming connections"
             
     print "-e --excute=file_to_run    - execute the given file upon \
-                                        receiving a connection"
+                                                    receiving a connection"
     print "-c --command               - initialize a command shell"
     print "-u --upload=destination    - upon receiving connection upload a\
-                                        file and write to [destination]"
+                                              file and write to [destination]"
     print
     print
     print "Examples: "
@@ -42,6 +42,7 @@ def main():
     global execute
     global upload_destination
     global target
+    global command
     
     if not len(sys.argv[1:]):
         usage()
@@ -78,7 +79,8 @@ def main():
         # this will block, so send CTRL-D if not sending input
         # to stdin
         buffer = sys.stdin.read()  # @ReservedAssignment
-        
+        print buffer
+
         # send data off
         client_sender(buffer)
         
@@ -93,9 +95,11 @@ def client_sender(buffer):  # @ReservedAssignment
     try:
         # connect to our target host
         client.connect((target, port))
+        print "[*] connecting to %s:%d." % (target, port)
         
         if len(buffer):
             client.send(buffer)
+            print "[==>] Sending %d bytes to remote server." % len(buffer)
         
         while True:
             # now wait for data back
@@ -130,16 +134,18 @@ def server_loop():
     
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((target, port))
+    # print "[*] listen on %s:%d" % (target, port)
     
     server.listen(5)
     while True:
         client_socket, addr = server.accept()  # @UnusedVariable
         
+        # print "[*] accept connection from %s:%d" % addr
         #spin off a thread to handle our new client
         client_thread = threading.Thread(target=client_handler,\
                 args=(client_socket,))
         client_thread.start()
-        
+
 def run_command(command):
     # trim the newline
     command = command.rstrip()
